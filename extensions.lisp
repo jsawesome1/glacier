@@ -54,7 +54,7 @@ if it is a list then we decode the response and collect and return them as a lis
   "checks account found in MENTION to see if they have NoBot set"
   (no-bot-p (tooter:find-account (bot-client *bot*) (tooter:id mention))))
 
-(defmethod reply ((status tooter:status) text &key include-mentions media cw sensitive visibility)
+(defmethod reply ((status tooter:status) text &key include-mentions media cw sensitive visibility idempotency-key)
   "replies to a STATUS with TEXT. copies the visibility and content warning as the post it's replying to
 
 if INCLUDE-MENTIONS is non-nil, include mentions besides the primary account being replied to"
@@ -74,9 +74,10 @@ if INCLUDE-MENTIONS is non-nil, include mentions besides the primary account bei
 			:sensitive sensitive
 			:visibility (or visibility (tooter:visibility status))
 			:spoiler-text (or cw (tooter:spoiler-text status))
-			:in-reply-to (tooter:id status))))
+			:in-reply-to (tooter:id status)
+			:idempotency-key idempotency-key)))
 
-(defun post (text &key (visibility :unlisted) cw sensitive media)
+(defun post (text &key (visibility :unlisted) cw sensitive media idempotency-key)
   "a thin wrapper around tooter:make-status
 
 see documentation for that function"
@@ -85,7 +86,8 @@ see documentation for that function"
 		      :visibility visibility
 		      :spoiler-text cw
 		      :media media
-		      :sensitive sensitive))
+		      :sensitive sensitive
+		      :idempotency-key idempotency-key))
 
 ;; strips out html-tags/bot-username if we have that set in our config
 (defmethod tooter:decode-entity :after ((status tooter:status) data)
