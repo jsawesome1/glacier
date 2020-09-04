@@ -95,8 +95,8 @@ if STATUS comes from an account the bot is following, also checks for any comman
       ;; if the bot is following the account that STATUS came from,
       ;;  we search for both a privileged AND a normal command
       (let ((cmd-func (or (and (privileged-reply-p status)
-			       (gethash command *privileged-commands*))
-			  (gethash command *commands*))))
+			       (gethash command (privileged-commands *bot*)))
+			  (gethash command (commands *bot*)))))
 	(when cmd-func
 	  (funcall cmd-func status)
 
